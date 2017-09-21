@@ -209,7 +209,7 @@ public class PublishSQ extends AbstractDevOpsAction implements SimpleBuildStep {
             } else {
                 if (Util.isNullOrEmpty(this.buildJobName)) {
                     // handle the case which the build job name left empty, and the pipeline case
-                    this.buildJobName = envVars.get("JOB_NAME");
+                    this.buildJobName = build.getParent().getDisplayName();
                 }
                 buildNumber = getBuildNumber(buildJobName, triggeredBuild);
             }

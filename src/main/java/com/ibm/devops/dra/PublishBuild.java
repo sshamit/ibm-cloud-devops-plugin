@@ -258,7 +258,7 @@ public class PublishBuild extends AbstractDevOpsAction implements SimpleBuildSte
 
             String buildNumber;
             if (Util.isNullOrEmpty(this.buildNumber)) {
-                buildNumber = getBuildNumber(envVars.get("JOB_NAME"), build);
+                buildNumber = getBuildNumber(build.getParent().getDisplayName(), build);
             } else {
                 buildNumber = envVars.expand(this.buildNumber);
             }

@@ -314,7 +314,7 @@ public class PublishTest extends AbstractDevOpsAction implements SimpleBuildStep
             } else {
                 if (Util.isNullOrEmpty(this.buildJobName)) {
                     // handle the case which the build job name left empty, and the pipeline case
-                    this.buildJobName = envVars.get("JOB_NAME");
+                    this.buildJobName = build.getParent().getDisplayName();
                 }
                 buildNumber = getBuildNumber(buildJobName, triggeredBuild);
             }
@@ -829,7 +829,7 @@ public class PublishTest extends AbstractDevOpsAction implements SimpleBuildStep
             List<Job> jobs = Jenkins.getInstance().getAllItems(Job.class);
             HashSet<String> jobSet = new HashSet<>();
             for (int i = 0; i < jobs.size(); i++) {
-                String jobName = jobs.get(i).getName();
+                String jobName = jobs.get(i).getDisplayName();
 
                 if (jobName.toLowerCase().startsWith(value.toLowerCase())) {
                     jobSet.add(jobName);
