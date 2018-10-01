@@ -1,6 +1,6 @@
 def publishPlugin() {
     stage('Publish Plugin') {
-        withCredentials([string(credentialsId: 'dlaprod_jenkinsIO_credentials', passwordVariable: 'JENKINS_PASS', usernameVariable: 'JENKINS_USER')]) {
+        withCredentials([usernamePassword(credentialsId: 'dlaprod_jenkinsIO_credentials', passwordVariable: 'JENKINS_PASS', usernameVariable: 'JENKINS_USER')]) {
             sh '''
                 #!/bin/bash
                 mvn clean
