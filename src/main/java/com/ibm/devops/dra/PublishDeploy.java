@@ -59,8 +59,6 @@ import static com.ibm.devops.dra.Util.*;
 import static com.ibm.devops.dra.UIMessages.*;
 
 public class PublishDeploy extends AbstractDevOpsAction implements SimpleBuildStep {
-	private static final String CONTROL_CENTER_URL_PART = "deploymentrisk";
-	private final static String TOOLCHAIN_PART = "&toolchainId=";
 	private final static String CONTENT_TYPE_JSON = "application/json";
 	private static final String DEPLOYMENT_API_URL = "/v3/toolchainids/{toolchain_id}/buildartifacts/{build_artifact}/builds/{build_id}/deployments";
 	private PrintStream printStream;
@@ -195,7 +193,7 @@ public class PublishDeploy extends AbstractDevOpsAction implements SimpleBuildSt
 			Map<String, String> endpoints = getAllEndpoints(OTCbrokerUrl, bluemixToken, toolchainId);;
 			String dlmsUrl = endpoints.get(DLMS) + DEPLOYMENT_API_URL;
 			dlmsUrl = setDLMSUrl(dlmsUrl, toolchainId, applicationName, buildNumber);
-			String link = endpoints.get(CONTROL_CENTER).replace("overview", CONTROL_CENTER_URL_PART) + TOOLCHAIN_PART + toolchainId;
+			String link = getDeploymentRiskUrl(endpoints.get(CONTROL_CENTER), toolchainId);
 
 			String deployStatus = getJobResult(build, this.result);
 			uploadDeploymentInfo(bluemixToken, dlmsUrl, build, applicationUrl, environmentName, toolchainId, deployStatus);

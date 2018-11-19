@@ -67,7 +67,6 @@ public class PublishBuild extends AbstractDevOpsAction implements SimpleBuildSte
     private final static String CONTENT_TYPE_JSON = "application/json";
     private final static String CONTENT_TYPE_XML = "application/xml";
     private final static String BUILD_STATUS_PART = "deploymentrisk";
-    private final static String TOOLCHAIN_PART = "&toolchainId=";
     private static final String BUILD_API_URL = "/v3/toolchainids/{toolchain_id}/buildartifacts/{build_artifact}/builds";
 
     // form fields from UI
@@ -198,11 +197,13 @@ public class PublishBuild extends AbstractDevOpsAction implements SimpleBuildSte
             String buildNumber = isNullOrEmpty(this.buildNumber) ?
                     constructBuildNumber(envVars.get("JOB_NAME"), build) : envVars.expand(this.buildNumber);
 
-            Map<String, String> endpoints = getAllEndpoints(OTCbrokerUrl, bluemixToken, toolchainId);;
+            Map<String, String> endpoints = getAllEndpoints(OTCbrokerUrl, bluemixToken, toolchainId);
+            System.out.println(endpoints.toString());
             String dlmsUrl = endpoints.get(DLMS) + BUILD_API_URL;
             dlmsUrl = setDLMSUrl(dlmsUrl, toolchainId, applicationName, null);
-            String ccUrl = endpoints.get(CONTROL_CENTER).replace("overview", BUILD_STATUS_PART) + TOOLCHAIN_PART + toolchainId;
 
+            //String ccUrl = endpoints.get(CONTROL_CENTER).replace("overview", BUILD_STATUS_PART) + TOOLCHAIN_PART + toolchainId;
+            String ccUrl = getDeploymentRiskUrl(endpoints.get(CONTROL_CENTER), toolchainId);
             // upload build info
             String buildStatus = getJobResult(build, this.result);
             uploadBuildInfo(bluemixToken, build, envVars, buildNumber, buildStatus, dlmsUrl);

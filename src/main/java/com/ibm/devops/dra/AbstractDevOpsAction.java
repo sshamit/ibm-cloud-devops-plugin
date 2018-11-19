@@ -34,6 +34,7 @@ import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpEntityEnclosingRequestBase;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
+import org.apache.http.client.utils.URIBuilder;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.message.BasicNameValuePair;
@@ -45,10 +46,7 @@ import org.cloudfoundry.client.lib.HttpProxyConfiguration;
 import org.jenkinsci.plugins.plaincredentials.impl.StringCredentialsImpl;
 
 import java.io.*;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.net.URLEncoder;
-import java.nio.charset.StandardCharsets;
+import java.net.*;
 import java.util.*;
 import java.util.logging.Logger;
 
@@ -81,6 +79,10 @@ public abstract class AbstractDevOpsAction extends Recorder {
     public static final String DLMS = "dlms";
     public static final String GATE_SERVICE = "gateservice";
     public static final String CONTROL_CENTER = "controlcenter";
+    private final static String TOOLCHAIN_ID_PART = "toolchainId";
+    private final static String RISK_ANALYSIS_PART = "/devops/insights/deploymentrisk";
+    private final static String REPORT_URL_PART = "/devops/insights/decisionreport";
+    private final static String REPORT_ID_PART = "reportId";
 
     private static Map<String, String> TARGET_API_MAP = ImmutableMap.of(
             "prod", "https://api.ng.bluemix.net",
@@ -391,6 +393,22 @@ public abstract class AbstractDevOpsAction extends Recorder {
             url = url.concat("?environment_name=" + environmentName);
         }
         return url;
+    }
+
+    public static String getDeploymentRiskUrl(String baseUrl, String toolchainId) throws URISyntaxException {
+        URIBuilder builder = new URIBuilder(baseUrl);
+        builder.setPath(RISK_ANALYSIS_PART);
+        builder.addParameter(TOOLCHAIN_ID_PART, toolchainId);
+        System.out.println(builder.build().toString());
+        return builder.build().toString();
+    }
+
+    public static String getReportUrl(String baseUrl, String toolchainId, String reportId) throws URISyntaxException {
+        URIBuilder builder = new URIBuilder(baseUrl);
+        builder.setPath(REPORT_URL_PART);
+        builder.addParameter(TOOLCHAIN_ID_PART, toolchainId);
+        builder.addParameter(REPORT_ID_PART, reportId);
+        return builder.build().toString();
     }
 
     /**
@@ -737,10 +755,6 @@ public abstract class AbstractDevOpsAction extends Recorder {
      */
     public static void publishDecision(JsonObject obj, Run build, String reportUrl, String ccUrl, String policyName,
                                        boolean willDisrupt, PrintStream printStream) throws AbortException {
-        // retrieve the decision id to compose the report link
-        String decisionId = String.valueOf(obj.get("decision_id"));
-        decisionId = decisionId.replace("\"","");
-
         // Show Proceed or Failed based on the decision
         String decision = String.valueOf(obj.get("contents").getAsJsonObject().get("proceed"));
         if (decision.equals("true")) {
@@ -749,10 +763,9 @@ public abstract class AbstractDevOpsAction extends Recorder {
             decision = "Fail";
         }
 
-        String url = reportUrl + decisionId;
-        GatePublisherAction action = new GatePublisherAction(url, ccUrl, decision, policyName, build);
+        GatePublisherAction action = new GatePublisherAction(reportUrl, ccUrl, decision, policyName, build);
         build.addAction(action);
-        printStream.println(getMessageWithVar(DECISION_REPORT, url, ccUrl, decision));
+        printStream.println(getMessageWithVar(DECISION_REPORT, reportUrl, ccUrl, decision));
 
         // Stop the build
         if (willDisrupt && decision.equals("Fail")) {
