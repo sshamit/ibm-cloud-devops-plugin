@@ -198,11 +198,9 @@ public class PublishBuild extends AbstractDevOpsAction implements SimpleBuildSte
                     constructBuildNumber(envVars.get("JOB_NAME"), build) : envVars.expand(this.buildNumber);
 
             Map<String, String> endpoints = getAllEndpoints(OTCbrokerUrl, bluemixToken, toolchainId);
-            System.out.println(endpoints.toString());
             String dlmsUrl = endpoints.get(DLMS) + BUILD_API_URL;
             dlmsUrl = setDLMSUrl(dlmsUrl, toolchainId, applicationName, null);
 
-            //String ccUrl = endpoints.get(CONTROL_CENTER).replace("overview", BUILD_STATUS_PART) + TOOLCHAIN_PART + toolchainId;
             String ccUrl = getDeploymentRiskUrl(endpoints.get(CONTROL_CENTER), toolchainId);
             // upload build info
             String buildStatus = getJobResult(build, this.result);
