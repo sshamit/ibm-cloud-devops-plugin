@@ -49,9 +49,6 @@ import static com.ibm.devops.dra.Util.*;
  * Customized build step to get a gate decision from DRA backend
  */
 public class EvaluateGate extends AbstractDevOpsAction implements SimpleBuildStep{
-    private static final String REPORT_URL_PART = "decisionreport";
-    private final static String TOOLCHAIN_PART = "&toolchainId=";
-    private static final String CONTROL_CENTER_URL_PART = "deploymentrisk";
     private static final String DECISION_API_PART = "/api/v5/toolchainids/{toolchain_id}/buildartifacts/{build_artifact}/builds/{build_id}/policies/{policy_name}/decisions";
 
     // form fields from UI
@@ -218,17 +215,18 @@ public class EvaluateGate extends AbstractDevOpsAction implements SimpleBuildSte
             Map<String, String> endpoints = getAllEndpoints(OTCbrokerUrl, bluemixToken, toolchainId);;
             String draUrl = endpoints.get(GATE_SERVICE) + DECISION_API_PART;
             draUrl = setGateServiceUrl(draUrl, toolchainId, applicationName, buildNumber, policyName, environmentName);
-            String ccUrl = endpoints.get(CONTROL_CENTER);
-            String reportUrl =  ccUrl.replace("overview", REPORT_URL_PART) + TOOLCHAIN_PART + toolchainId + "&reportId=";
-            String link = ccUrl.replace("overview", CONTROL_CENTER_URL_PART) + TOOLCHAIN_PART + toolchainId;
-
+            String ccUrl = getDeploymentRiskUrl(endpoints.get(CONTROL_CENTER), toolchainId);
             JsonObject decisionJson = getDecisionFromDRA(bluemixToken, toolchainId,
                     draUrl, printStream, getDescriptor().isDebugMode());
             if (decisionJson == null) {
                 printStream.println(getMessageWithPrefix(NO_DECISION_FOUND));
                 return;
             }
-            publishDecision(decisionJson, build, reportUrl, link, policyName, willDisrupt, printStream);
+            // retrieve the decision id to compose the report link
+            String decisionId = String.valueOf(decisionJson.get("decision_id"));
+            decisionId = decisionId.replace("\"","");
+            String reportUrl = getReportUrl(endpoints.get(CONTROL_CENTER), toolchainId, decisionId);
+            publishDecision(decisionJson, build, reportUrl, ccUrl, policyName, willDisrupt, printStream);
         } catch (Exception e) {
             if (e instanceof AbortException) {
                 throw new AbortException();
