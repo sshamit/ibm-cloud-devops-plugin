@@ -399,7 +399,6 @@ public abstract class AbstractDevOpsAction extends Recorder {
         URIBuilder builder = new URIBuilder(baseUrl);
         builder.setPath(RISK_ANALYSIS_PART);
         builder.addParameter(TOOLCHAIN_ID_PART, toolchainId);
-        System.out.println(builder.build().toString());
         return builder.build().toString();
     }
 
