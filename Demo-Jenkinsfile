@@ -12,9 +12,9 @@ pipeline {
         // You need to specify 4 required environment variables first, they are going to be used for the following IBM Cloud DevOps steps
         IBM_CLOUD_DEVOPS_CREDS = credentials('97afa093-3137-4335-8b08-705a272b23aa')
         IBM_CLOUD_DEVOPS_ORG = 'CI/CD'
-        IBM_CLOUD_DEVOPS_APP_NAME = 'APP_NAME_PLACEHOLDER'
-        IBM_CLOUD_DEVOPS_TOOLCHAIN_ID = 'dff42b3d-ecf3-4478-952a-f0ad43e7725d'
-        IBM_CLOUD_DEVOPS_WEBHOOK_URL = 'https://jenkins:d562c0b3-5ca6-4eb3-8f6e-9c02987a24b3:29e6b5bf-56f6-4dd4-b904-0ee82c559157@devops-api.ng.bluemix.net/v1/toolint/messaging/webhook/publish'
+        IBM_CLOUD_DEVOPS_APP_NAME = 'Test-virtual-server-deploy'
+        IBM_CLOUD_DEVOPS_TOOLCHAIN_ID = '4321675e-0e3e-4a87-a6bb-078c9f01263f'
+        IBM_CLOUD_DEVOPS_WEBHOOK_URL = 'https://jenkins:ba8298ea-df31-48b2-bfcf-19a3b52d2788:4cdcf732-1057-42a8-84fd-69c10a536925@devops-api.eu-gb.bluemix.net/v1/toolint/messaging/webhook/publish'
         GIT_REPO = 'https://github.com/open-toolchain/DemoDRA'
     }
     tools {
