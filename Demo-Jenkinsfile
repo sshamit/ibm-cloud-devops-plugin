@@ -12,6 +12,7 @@ pipeline {
         // You need to specify 4 required environment variables first, they are going to be used for the following IBM Cloud DevOps steps
         //IBM_CLOUD_DEVOPS_CREDS = credentials('97afa093-3137-4335-8b08-705a272b23aa')
         //IBM_CLOUD_DEVOPS_ORG = 'CI/CD'
+        PYTHON= 'python2.7'
         IBM_CLOUD_DEVOPS_API_KEY=credentials('ibm-cloud-api-key')
         IBM_CLOUD_DEVOPS_APP_NAME = 'ibm-cloud-devops-plugin'
         IBM_CLOUD_DEVOPS_TOOLCHAIN_ID = 'dff42b3d-ecf3-4478-952a-f0ad43e7725d'
