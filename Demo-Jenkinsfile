@@ -70,9 +70,9 @@ pipeline {
                         echo "Deploying App to Staging"
          
                         scp -pr ./ root@52.116.3.216:/root/"$(date +"%Y-%m-%d_%H-%M-%S")"/ 
-                        ssh root@52.116.3.216 rm -rf /root/temp-deploy/
+                        ssh root@52.116.3.216 "killall node && rm -rf /root/temp-deploy/"
                         scp -pr ./ root@52.116.3.216:/root/temp-deploy/
-                        ssh root@52.116.3.216 "killall node && cd /root/temp-deploy/ && node app.js"
+                        ssh root@52.116.3.216 "cd /root/temp-deploy/ && node app.js"
                         
 
                     '''
